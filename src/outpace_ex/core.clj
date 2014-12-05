@@ -32,11 +32,35 @@ unknown, i.e. illegible ocr character."
 (defn parse-digits
   "Takes a collection of three lines of input data.
 Returns a vector of parsed digits. Illegible numbers 
-are replaced with a \\? character in the vector."
+are replaced with a \\? character in the vector.
+
+Return a vector of digits and not a multidigit integer
+for easier checksum processing."
   [ocr-lines]
   (let [[line1 line2 line3] ocr-lines]
     (->> (parse-digit-strings line1 line2 line3)
          (mapv ocr-to-int))))
+
+(defn valid-checksum?
+  "Calculate the mod11 checksum. 
+
+When account-num is [d9 d8 d7 d6 d5 d4 d3 d2 d1]
+
+Calculate ((1 x d1) + (2 x d2) + ... + (9 x d9)) mod 11
+
+Valid when checksum == 0.
+
+Return true when valid, returns false otherwise."
+ [account-num]
+ (let [multipliers (range 9 0 -1)]
+   (->>
+    (map vector account-num multipliers) ; build pairs like [9 d9] 
+    (map (partial apply *))              ; do multiplication of pairs
+    (reduce +)                           ; sum them
+    ((fn [sum] 
+      (= 0 (mod sum 11)))))))
+
+
 
 (defn -main
   "I don't do a whole lot ... yet."
