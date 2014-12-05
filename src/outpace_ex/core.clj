@@ -5,7 +5,7 @@
   (:gen-class))
 
 (defn cut-line
-"Break a string containing one line
+  "Break a string containing one line
 of input data into a seq of strings of length three."
   [line]
   (for [triple (partition 3 line)]
@@ -22,14 +22,21 @@ parsed digits."
     (mapv vector line1-triples line2-triples line3-triples)))
 
 
+(defn ocr-to-int
+  "Look up the vector of strings in the ocr-map and return
+the resulting integer. Alternatively a \\? character for an 
+unknown, i.e. illegible ocr character."
+  [vec-of-ocr-strings]
+  (get digits/ocr-map vec-of-ocr-strings \?))
+
 (defn parse-digits
   "Takes a collection of three lines of input data.
 Returns a vector of parsed digits. Illegible numbers 
-are replaced with a ? character in the vector."
+are replaced with a \\? character in the vector."
   [ocr-lines]
   (let [[line1 line2 line3] ocr-lines]
     (->> (parse-digit-strings line1 line2 line3)
-         (mapv #(get digits/ocr-map % \?)))))
+         (mapv ocr-to-int))))
 
 (defn -main
   "I don't do a whole lot ... yet."
