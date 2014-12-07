@@ -1,7 +1,52 @@
 (ns outpace-ex.core
   (:require [clojure.string :as s]
-            [outpace-ex.digits :as digits])
-  (:import [java.io BufferedReader StringReader]))
+            [outpace-ex.digits :as digits]
+            [clojure.java.io :as io])
+  (:import [java.io File BufferedReader StringReader]))
+
+(defn read-input-data
+  "Reads in the 'ocr' input data from a file.
+
+Based on the spec of ~500 lines all the data will
+be slurped into memory rather than streamed.
+
+Returns a line-seq of all lines from the file."
+  [^File infile]
+  (assert (< (.length infile) 10e6)) ;; take exception to a > 10Mb input file
+  (-> (slurp infile)
+      (StringReader.)
+      (BufferedReader.)
+      (line-seq)))
+
+(defn extract-records
+  "Take all the input lines, partition on blank lines,
+keep all the even partitions, i.e. the account number records.
+This approach is tolerant of zero or multiple trailing  blank lines
+on the last record."
+ [input-lines]
+ (->> input-lines
+      (partition-by (fn [^String ln]
+                      (-> ln (.trim) (.isEmpty)))) ; partition on blank lines
+      (keep-indexed (fn [idx entry]                
+                      (when (even? idx) ; (even? 0) is true here
+                        entry)))))   ; keep only the non-blanks 
+
+(defn validate-records
+  "As per the spec ensure all the records are three lines long,
+each line is 27 characters, and contains only the ocr characters.
+Throws an AssertionError on first invalid record.
+Returns true if all records are valid."
+  [seq-of-records]
+  (doseq [r seq-of-records]
+    (assert (= 3 (count r)) (str "Bad record found, not three lines long:\n" r))
+    (doseq [ln r] 
+      (assert (= 27 (count ln)) 
+              (str "Bad line in record, not 27 chars long:\n" ln))
+      (assert (every? #{\space \_ \|} ln)
+              (str "Bad line in record, has other than | _ or \\space:\n" ln))))
+  true) ; return true if all assertions pass
+
+
 
 
 (defn cut-line
