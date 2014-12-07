@@ -21,6 +21,14 @@
 
 
 (deftest valid-checksum
-  (testing "A valid account number"
-    (is (valid-checksum? [4 5 7 5 0 8 0 0 0]) "Should be valid")
-    (is (not (valid-checksum? [6 6 4 3 7 1 4 9 5])) "Should be invalid")))
+  (testing "A valid and invalid account numbers"
+    (let [valid-accounts [[7 1 1 1 1 1 1 1 1]
+                          [1 2 3 4 5 6 7 8 9]
+                          [4 9 0 8 6 7 7 1 5]]
+          invalid-accounts [[8 8 8 8 8 8 8 8 8]
+                            [4 9 0 0 6 7 7 1 5]
+                            [0 1 2 3 4 5 6 7 8]]]
+      (doseq [good-acc valid-accounts]
+        (is (valid-checksum? good-acc) "Should be valid"))
+      (doseq [bad-acc invalid-accounts]
+        (is (not (valid-checksum? bad-acc)) "Should be invalid")))))
