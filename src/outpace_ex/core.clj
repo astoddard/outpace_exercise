@@ -52,6 +52,17 @@ Valid when checksum == 0.
 
 Return true when valid, returns false otherwise."
  [account-num]
+ ;; this fn should only be called with potentially
+ ;; valid account numbers comprised of 9 single digit
+ ;; integers. Ensure this with preconditions.
+ ;; The alternative of just returning false 
+ ;; on nonsensical account numbers is not desired with 
+ ;; the requirement to distinguish illegible from non-valid
+ ;; account numbers.
+ {:pre [(sequential? account-num)
+        (every? integer? account-num)
+        (= 9 (count account-num))
+        (every? #(<= 0 % 9) account-num)]}
  (let [multipliers (range 9 0 -1)]
    (->>
     (map vector account-num multipliers) ; build pairs like [9 d9] 
