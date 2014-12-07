@@ -1,8 +1,8 @@
 (ns outpace-ex.core
   (:require [clojure.string :as s]
             [outpace-ex.digits :as digits])
-  (:import [java.io BufferedReader StringReader])
-  (:gen-class))
+  (:import [java.io BufferedReader StringReader]))
+
 
 (defn cut-line
   "Break a string containing one line
