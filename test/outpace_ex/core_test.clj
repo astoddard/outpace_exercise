@@ -53,4 +53,22 @@
     (let [bad-line-length (extract-records (read-input-data bad-line-ln-file))]
       (is (thrown-with-msg? java.lang.AssertionError #"not 27 chars long"
                    (validate-records bad-line-length))))))
+
   
+(let [good-acc [4 5 7 5 0 8 0 0 0]
+      err-acc  [6 6 4 3 7 1 4 9 5]
+      ill-acc  [8 6 1 1 0 \? \? 3 6]]
+  (deftest categorize-acc-num
+    (is (= (categorize-account-num good-acc)
+           [:good good-acc]))
+    (is (= (categorize-account-num err-acc)
+           [:err err-acc]))
+    (is (= (categorize-account-num ill-acc)
+           [:ill ill-acc])))
+  (deftest formating-account-num
+    (is (= "457508000" (format-categorized-account-num 
+                        (categorize-account-num good-acc))))
+    (is (= "664371495\tERR" (format-categorized-account-num
+                            (categorize-account-num err-acc))))
+    (is (= "86110??36\tILL" (format-categorized-account-num
+                             (categorize-account-num ill-acc))))))

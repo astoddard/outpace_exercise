@@ -116,7 +116,26 @@ Return true when valid, returns false otherwise."
     ((fn [sum] 
       (= 0 (mod sum 11)))))))
 
-
+(defn categorize-account-num
+  "Takes an account-num vector as parsed by parse-digits.
+Returns a two element vector, the first element being
+a kw tag :ill, :err or :good, the second being the account-num vector."
+  [acc-num-vec]
+  (cond (some #{\?} acc-num-vec) [:ill acc-num-vec]
+        (valid-checksum? acc-num-vec) [:good acc-num-vec]
+        :else [:err acc-num-vec]))
+        
+(defn format-categorized-account-num
+  "Takes a tagged account number from categorize-account-num
+ and returns the string to output."
+  [tagged-acc-num]
+  (let [[tag acc-num] tagged-acc-num
+        acc-str (s/join acc-num)]
+    (cond (= tag :ill) (s/join [acc-str \tab "ILL"])
+          (= tag :err) (s/join [acc-str \tab "ERR"])
+          (= tag :good) acc-str
+          :else (assert false (str "Unknown categorize tag: " tag)))))
+    
 
 (defn -main
   "I don't do a whole lot ... yet."
