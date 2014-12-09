@@ -46,7 +46,15 @@ Returns true if all records are valid."
               (str "Bad line in record, has other than | _ or \\space:\n" ln))))
   true) ; return true if all assertions pass
 
-
+(defn read-records
+  "Returns a seq of records read from infile.
+Records are validated via validate-records fn."
+  [^File infile]
+  (let [recs (->> infile
+                  read-input-data
+                  extract-records)]
+    (when (validate-records recs)
+      recs)))
 
 
 (defn cut-line
@@ -135,7 +143,18 @@ a kw tag :ill, :err or :good, the second being the account-num vector."
           (= tag :err) (s/join [acc-str \tab "ERR"])
           (= tag :good) acc-str
           :else (assert false (str "Unknown categorize tag: " tag)))))
-    
+
+
+(defn process-records
+  "Takes a sequence of valid records (each a collection of three lines)
+and maps them into the output strings"
+ [records]
+ (for [rec records]
+   (->> rec
+        (parse-digits)
+        (categorize-account-num)
+        (format-categorized-account-num))))
+ 
 
 (defn -main
   "I don't do a whole lot ... yet."
