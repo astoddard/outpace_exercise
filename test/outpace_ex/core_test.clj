@@ -72,3 +72,17 @@
                             (categorize-account-num err-acc))))
     (is (= "86110??36\tILL" (format-categorized-account-num
                              (categorize-account-num ill-acc))))))
+
+
+(let [res-file (fn [f] (-> f
+                           (clojure.java.io/resource)
+                           (clojure.java.io/file)))
+      good-file (res-file "valid_data.txt")
+      expected-file (res-file "expected_output.txt")
+      tmp-outfile (java.io.File/createTempFile "test_output" ".txt")]
+  (deftest integration-test
+    (do (main-processing good-file tmp-outfile)
+        (let [output (slurp tmp-outfile)
+              expected (slurp expected-file)]
+          (is (= output expected)))))
+  (.delete tmp-outfile))

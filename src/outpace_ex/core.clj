@@ -154,7 +154,25 @@ and maps them into the output strings"
         (parse-digits)
         (categorize-account-num)
         (format-categorized-account-num))))
- 
+
+(defn write-output
+  "Write out the output strings, one per line to outfile."
+  [outfile output-lines]
+  (with-open [file (io/writer outfile)]
+    (binding [*out* file]
+      (doseq [out-ln output-lines]
+        (println out-ln)))))
+
+(defn main-processing
+  "Takes the input and the output file doing the conversion of ocr to 
+required output"
+  [^File infile 
+   ^File outfile]
+  (->> infile
+       (read-records)
+       (process-records)
+       (write-output outfile)))
+  
 
 (defn -main
   "I don't do a whole lot ... yet."
