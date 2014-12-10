@@ -6,6 +6,7 @@
 
 (def cli-options
    "Specification of command line options. 
+
 Just an optional -o or --output for the output file.
 The input file will be taken as the one and only 
 non-optional argument."
