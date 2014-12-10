@@ -1,7 +1,8 @@
 (ns outpace-ex.cmd
   (:require [outpace-ex.core :refer [main-processing]]
             [clojure.string :as s]
-            [clojure.tools.cli :refer [parse-opts]]))
+            [clojure.tools.cli :refer [parse-opts]])
+  (:gen-class))
 
 (def cli-options
    "Specification of command line options. 
@@ -23,7 +24,10 @@ non-optional argument."
 
 (defn usage [options-summary]
   (->> [""
-        "Usage: program-name [options] input_file"
+        "Usage:"
+        "$ java -jar outpace-ex-0.1.0-standalone.jar [options] input_file"
+        "or"
+        "$ lein run -- [options] input_file"
         ""
         "Options:"
         options-summary
