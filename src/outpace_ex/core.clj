@@ -11,7 +11,7 @@ Based on the spec of ~500 lines all the data will
 be slurped into memory rather than streamed.
 
 Returns a line-seq of all lines from the file."
-  [^File infile]
+  [infile]
   (assert (< (.length infile) 10e6)) ;; take exception to a > 10Mb input file
   (-> (slurp infile)
       (StringReader.)
@@ -49,7 +49,7 @@ Returns true if all records are valid."
 (defn read-records
   "Returns a seq of records read from infile.
 Records are validated via validate-records fn."
-  [^File infile]
+  [infile]
   (let [recs (->> infile
                   read-input-data
                   extract-records)]
@@ -165,10 +165,16 @@ and maps them into the output strings"
 
 (defn main-processing
   "Takes the input and the output file doing the conversion of ocr to 
-required output"
-  [^File infile 
-   ^File outfile]
-  (->> infile
-       (read-records)
-       (process-records)
-       (write-output outfile)))
+required output. Prints to STDOUT if called with input file only.
+Two argument invocation specifies the output file."
+  ([infile]
+     (let [output-lines (->> infile
+                        (read-records)
+                        (process-records))]
+       (doseq [output-ln output-lines]
+         (println output-ln))))
+  ([infile outfile]
+     (let [output-lines (->> infile
+                        (read-records)
+                        (process-records))]
+       (write-output outfile output-lines))))
