@@ -64,10 +64,10 @@ of input data into a seq of strings of length three."
   (for [triple (partition 3 line)]
     (s/join triple)))
 
-(defn parse-digit-strings
+(defn separate-digit-strings
   "Takes three lines of input for digits data.
 Returns a vector of vectors representing the 
-parsed digits."
+individual digits."
   [line1 line2 line3]
   (let [line1-triples (cut-line line1)
         line2-triples (cut-line line2)
@@ -91,7 +91,7 @@ Return a vector of digits and not a multidigit integer
 for easier checksum processing."
   [ocr-lines]
   (let [[line1 line2 line3] ocr-lines]
-    (->> (parse-digit-strings line1 line2 line3)
+    (->> (separate-digit-strings line1 line2 line3)
          (mapv ocr-to-int))))
 
 (defn valid-checksum?
