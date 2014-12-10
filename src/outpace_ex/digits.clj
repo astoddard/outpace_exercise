@@ -3,7 +3,8 @@
 (def ocr-map
   "A map for use as the main parsing function.
 Each digit is a composite of three lines of input text.
-The map keys are the same way each a vector of three length three strings.
+Likewise the map keys are each a vector of three strings.
+
 Immutable value semantics allow for composite data as map keys."
   {[" _ "
     "| |"
